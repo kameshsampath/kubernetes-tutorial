@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kubernetes Tutorial :: Kubernetes Tutorial</title>
     <link rel="canonical" href="https://redhat-developer-demos.github.io/kubernetes-tutorial/kubernetes-tutorial/pod-rs-deployment.html">
-    <meta name="generator" content="Antora 2.2.0">
+    <meta name="generator" content="Antora 2.3.1">
     <link rel="stylesheet" href="../_/css/site.css">
 <link rel="icon" href="../_/img/favicon.ico" type="image/x-icon">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -171,7 +171,7 @@ metadata:
 spec:
   containers:
   - name: quarkus-demo
-    image: quay.io/burrsutter/quarkus-demo:1.0.0
+    image: quay.io/rhdevelopers/quarkus-demo:v1
 EOF</code></pre>
 </div>
 </div>
@@ -279,7 +279,7 @@ spec:
        spec:
           containers:
           - name: quarkus-demo
-            image: quay.io/burrsutter/quarkus-demo:1.0.0
+            image: quay.io/rhdevelopers/quarkus-demo:v1
 EOF</code></pre>
 </div>
 </div>
@@ -337,7 +337,7 @@ Pod Template:
            env=dev
   Containers:
    quarkus-demo:
-    Image:        quay.io/burrsutter/quarkus-demo:1.0.0
+    Image:        quay.io/rhdevelopers/quarkus-demo:v1
     Port:         &lt;none&gt;
     Host Port:    &lt;none&gt;
     Environment:  &lt;none&gt;
@@ -426,7 +426,7 @@ spec:
     spec:
       containers:
       - name: quarkus-demo
-        image: quay.io/burrsutter/quarkus-demo:1.0.0
+        image: quay.io/rhdevelopers/quarkus-demo:v1
         imagePullPolicy: Always
         ports:
         - containerPort: 8080

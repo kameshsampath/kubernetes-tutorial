@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kubernetes Tutorial :: Kubernetes Tutorial</title>
     <link rel="canonical" href="https://redhat-developer-demos.github.io/kubernetes-tutorial/kubernetes-tutorial/service-magic.html">
-    <meta name="generator" content="Antora 2.2.0">
+    <meta name="generator" content="Antora 2.3.1">
     <link rel="stylesheet" href="../_/css/site.css">
 <link rel="icon" href="../_/img/favicon.ico" type="image/x-icon">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -175,7 +175,7 @@ spec:
     spec:
       containers:
       - name: mypython
-        image: docker.io/burrsutter/mypython:1.0.0
+        image: quay.io/rhdevelopers/mypython:v1
         ports:
         - containerPort: 8000
 EOF</code></pre>
@@ -206,7 +206,7 @@ spec:
     spec:
       containers:
       - name: mygo
-        image: quay.io/burrsutter/mygo:1.0.0
+        image: quay.io/rhdevelopers/mygo:v1
         ports:
         - containerPort: 8000
 EOF</code></pre>
@@ -237,7 +237,7 @@ spec:
     spec:
       containers:
       - name: mynode
-        image: quay.io/burrsutter/mynode:1.0.0
+        image: quay.io/rhdevelopers/mynode:v1
         ports:
         - containerPort: 8000
 EOF</code></pre>
@@ -321,8 +321,8 @@ jq: error (at &lt;stdin&gt;:18): Cannot iterate over null (null)</code></pre>
 </div>
 <div id="servicemagic-ip-port-openshift" class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">IP=$(kubectl get service myboot -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
-PORT=$(kubectl get service myboot -o jsonpath="{.spec.ports[*].port}")</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">IP=$(kubectl get service my-service -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+PORT=$(kubectl get service my-service -o jsonpath="{.spec.ports[*].port}")</code></pre>
 </div>
 </div>
 <button class="copybtn float-right" title="Copy to clipboard" data-clipboard-target="#servicemagic-ip-port-openshift"><i class="fa fa-clipboard"></i></button><br/>
@@ -331,7 +331,7 @@ PORT=$(kubectl get service myboot -o jsonpath="{.spec.ports[*].port}")</code></p
 <div id="servicemagic-ip-port-minikube" class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">IP=$(minikube ip)
-PORT=$(kubectl get service/myboot -o jsonpath="{.spec.ports[*].nodePort}")</code></pre>
+PORT=$(kubectl get service/my-service -o jsonpath="{.spec.ports[*].nodePort}")</code></pre>
 </div>
 </div>
 <button class="copybtn float-right" title="Copy to clipboard" data-clipboard-target="#servicemagic-ip-port-minikube"><i class="fa fa-clipboard"></i></button><br/>
