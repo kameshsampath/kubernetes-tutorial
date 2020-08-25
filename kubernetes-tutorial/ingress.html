@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Secrets :: Kubernetes Tutorial</title>
-    <link rel="canonical" href="https://redhat-developer-demos.github.io/kubernetes-tutorial/kubernetes-tutorial/secrets.html">
+    <title>Ingress :: Kubernetes Tutorial</title>
+    <link rel="canonical" href="https://redhat-developer-demos.github.io/kubernetes-tutorial/kubernetes-tutorial/ingress.html">
     <meta name="generator" content="Antora 2.3.1">
     <link rel="stylesheet" href="../_/css/site.css">
   </head>
@@ -119,7 +119,7 @@
     <button class="nav-item-toggle"></button>
     <span class="nav-text">4. Intermediate</span>
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="2">
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="secrets.html">Secrets</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -146,7 +146,7 @@
     <button class="nav-item-toggle"></button>
     <span class="nav-text">5. Advanced</span>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="ingress.html">Ingress</a>
   </li>
 </ul>
@@ -166,78 +166,98 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">kubernetes-tutorial</a></li>
-    <li>4. Intermediate</li>
-    <li><a href="secrets.html">Secrets</a></li>
+    <li>5. Advanced</li>
+    <li><a href="ingress.html">Ingress</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/kameshsampath/kubernetes-tutorial/edit/master/documentation/modules/ROOT/pages/secrets.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="https://github.com/kameshsampath/kubernetes-tutorial/edit/master/documentation/modules/ROOT/pages/ingress.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <article class="doc">
-<h1 class="page">Secrets</h1>
+<h1 class="page">Ingress</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Deploy <code>myboot</code> service:</p>
+<p>Make sure you are in the correct namespace.</p>
 </div>
-<div id="deploy-myboot-secrets" class="listingblock console-input">
+</div>
+</div>
+<div class="sect1">
+<h2 id="_enable_ingress_controller"><a class="anchor" href="#_enable_ingress_controller"></a>Enable Ingress Controller</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In case of using <code>minikube</code> you need to enable NGNIX Ingress controller.</p>
+</div>
+<div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl apply -f apps/kubefiles/myboot-deployment.yml</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">minikube addons enable ingress -p devnation</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Deploy myboot Service:</p>
+<p>Wait a minute or so and verify that it has been deployed correctly:</p>
 </div>
-<div id="service-myboot-secrets" class="listingblock console-input">
+<div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl apply -f apps/kubefiles/myboot-service.yml</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Watch Pods:</p>
-</div>
-<div id="secrets-kubectl-watch-pods" class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">watch kubectl get pods</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Watch Services:</p>
-</div>
-<div id="secrets-kubectl-watch-services" class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">watch kubectl get services</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl get pods -n kube-system</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">NAME    TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
-myapp   LoadBalancer   172.30.103.41   &lt;pending&gt;     8080:31974/TCP   4s</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ingress-nginx-admission-create-lqfh2        0/1     Completed   0          6m28s
+ingress-nginx-admission-patch-z2lzj         0/1     Completed   2          6m28s
+ingress-nginx-controller-69ccf5d9d8-95xgp   1/1     Running     0          6m28s</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_deploy_application"><a class="anchor" href="#_deploy_application"></a>Deploy Application</h2>
+<div class="sectionbody">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat &lt;&lt;EOF | kubectl apply -f -
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quarkus-demo-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: quarkus-demo
+  template:
+    metadata:
+      labels:
+        app: quarkus-demo
+        env: dev
+    spec:
+      containers:
+      - name: quarkus-demo
+        image: quay.io/rhdevelopers/quarkus-demo:v1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+EOF</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Wait until you see an external IP assigned.</p>
+<p>Expose the service:</p>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-On Minikube without an Ingress controller, &lt;pending&gt; will not become a real external IP.  <a href="https://kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/">Optional: Setup Minikube Ingress</a>
-</td>
-</tr>
-</table>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl expose deployment quarkus-demo-deployment --type=NodePort --port=8080</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl get service quarkus-demo-deployment</code></pre>
+</div>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">NAME    TYPE           CLUSTER-IP      EXTERNAL-IP     PORT(S)          AGE
-myapp   LoadBalancer   172.30.103.41   34.71.122.153   8080:31974/TCP   44s</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">NAME                      TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+quarkus-demo-deployment   NodePort   10.105.106.66   &lt;none&gt;        8080:30408/TCP   11s</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>Send a request:</p>
 </div>
 <div class="tabset is-loading">
 <div class="ulist tabs">
@@ -255,7 +275,7 @@ myapp   LoadBalancer   172.30.103.41   34.71.122.153   8080:31974/TCP   44s</cod
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">IP=$(minikube ip -p devnation)
-PORT=$(kubectl get service/myboot -o jsonpath="{.spec.ports[*].nodePort}")</code></pre>
+PORT=$(kubectl get service/quarkus-demo-deployment -o jsonpath="{.spec.ports[*].nodePort}")</code></pre>
 </div>
 </div>
 </div>
@@ -265,8 +285,8 @@ PORT=$(kubectl get service/myboot -o jsonpath="{.spec.ports[*].nodePort}")</code
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">IP=$(kubectl get service myboot -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
-PORT=$(kubectl get service myboot -o jsonpath="{.spec.ports[*].port}")</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">IP=$(kubectl get service quarkus-demo-deployment -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+PORT=$(kubectl get service quarkus-demo-deployment -o jsonpath="{.spec.ports[*].port}")</code></pre>
 </div>
 </div>
 <div class="admonitionblock important">
@@ -283,7 +303,7 @@ If you are in AWS, you need to get the <code>hostname</code> instead of <code>ip
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">IP=$(kubectl get service myboot -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">IP=$(kubectl get service quarkus-demo-deployment -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")</code></pre>
 </div>
 </div>
 </div>
@@ -297,155 +317,183 @@ If you are in AWS, you need to get the <code>hostname</code> instead of <code>ip
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl $IP:$PORT</code></pre>
 </div>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_configuring_ingress"><a class="anchor" href="#_configuring_ingress"></a>Configuring Ingress</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>The ConfigMap example earlier had an example of a database connection string ("user=MyUserName;password=<strong>*</strong>"). Sensistive data like passwords can place in a different vessel known as a Secret.</p>
+<p>An Ingress resource is defined as:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: example-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  rules:
+  - host: kube-devnation.info
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: quarkus-demo-deployment
+          servicePort: 8080</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl apply -f apps/kubefiles/demo-ingress.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Get the information from the Ingress resource:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl get ingress</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">NAME              CLASS    HOSTS                 ADDRESS          PORTS   AGE
+example-ingress   &lt;none&gt;   kube-devnation.info   192.168.99.115   80      68s</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You need to wait until address field is set.
+It might take some minutes.</p>
+</div>
+<div class="paragraph">
+<p>Modify the <code>/etc/hosts</code> to point the hostname to the Ingress address.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+If you are using minikube, use the <code>minikube ip -p kube</code> as address because the Ingress IP is an internal IP.
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock console-input">
+<div class="title">/etc/hosts</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">172.17.0.15 kube-devnation.info</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl kube-devnation.info</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Supersonic Subatomic Java with Quarkus quarkus-demo-deployment-8cf45f5c8-qmzwl:1</code></pre>
+</div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_creating_secrets"><a class="anchor" href="#_creating_secrets"></a>Creating Secrets</h2>
+<h2 id="_second_deployment"><a class="anchor" href="#_second_deployment"></a>Second Deployment</h2>
 <div class="sectionbody">
-<div id="create-secret-cli-secrets" class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl create secret generic mysecret --from-literal=user='MyUserName' --from-literal=password='mypassword'</code></pre>
-</div>
-</div>
-<div id="get-secret-cli-secrets" class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl get secrets</code></pre>
-</div>
-</div>
-<div class="listingblock console-output">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">NAME                       TYPE                                  DATA   AGE
-builder-dockercfg-96ml5    kubernetes.io/dockercfg               1      3d6h
-builder-token-h5g82        kubernetes.io/service-account-token   4      3d6h
-builder-token-vqjqz        kubernetes.io/service-account-token   4      3d6h
-default-dockercfg-bsnjr    kubernetes.io/dockercfg               1      3d6h
-default-token-bl77s        kubernetes.io/service-account-token   4      3d6h
-default-token-vlzsl        kubernetes.io/service-account-token   4      3d6h
-deployer-dockercfg-k6npn   kubernetes.io/dockercfg               1      3d6h
-deployer-token-4hb78       kubernetes.io/service-account-token   4      3d6h
-deployer-token-vvh6r       kubernetes.io/service-account-token   4      3d6h
-mysecret                   Opaque                                2      5s</code></pre>
-</div>
-</div>
 <div class="paragraph">
-<p>The user &amp; password are not immediately visible:</p>
+<p>Deploy a second version of the service:</p>
 </div>
-<div id="describe-secret-cli-secrets" class="listingblock console-input">
+<div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl describe secret mysecret</code></pre>
-</div>
-</div>
-<div class="listingblock console-output">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Name:         mysecret
-Namespace:    myspace
-Labels:       &lt;none&gt;
-Annotations:  &lt;none&gt;
-
-Type:  Opaque
-
-Data
-====
-password:  10 bytes
-user:      10 bytes</code></pre>
-</div>
-</div>
-<div id="get-secret-cli-yaml-secrets" class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl get secret mysecret -o yaml</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: v1
-data:
-  password: bXlwYXNzd29yZA==
-  user: TXlVc2VyTmFtZQ==
-kind: Secret
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat &lt;&lt;EOF | kubectl apply -f -
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  creationTimestamp: "2020-03-31T20:19:26Z"
-  name: mysecret
-  namespace: myspace
-  resourceVersion: "4944690"
-  selfLink: /api/v1/namespaces/myspace/secrets/mysecret
-  uid: e8c5f12e-bd71-4d6b-8d8c-7af9ed6439f8
-type: Opaque</code></pre>
+  name: mynode-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mynode
+  template:
+    metadata:
+      labels:
+        app: mynode
+    spec:
+      containers:
+      - name: mynode
+        image: quay.io/rhdevelopers/mynode:v1
+        ports:
+        - containerPort: 8000
+EOF</code></pre>
 </div>
 </div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl expose deployment mynode-deployment --type=NodePort --port=8000</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ingress_update"><a class="anchor" href="#_ingress_update"></a>Ingress Update</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>You can see the secrets by running:</p>
-</div>
-<div id="get-secret-cli-password-secrets" class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">echo 'bXlwYXNzd29yZA==' | base64 --decode</code></pre>
-</div>
-</div>
-<div class="listingblock console-output">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mypassword</code></pre>
-</div>
-</div>
-<div id="get-secret-cli-username-secrets" class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">echo 'TXlVc2VyTmFtZQ==' | base64 --decode</code></pre>
-</div>
-</div>
-<div class="listingblock console-output">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">MyUserName</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Or get them using <code>kubectl</code>:</p>
-</div>
-<div id="get-secret-kubectl-password-secrets" class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl get secret mysecret -o jsonpath='{.data.password}' | base64 --decode</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Secrets are provided to the Pod via Volume Mounts:</p>
+<p>Then you need to update the Ingress resource with the new <code>path</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">        volumeMounts:
-          - name: mysecretvolume
-            mountPath: /mystuff/mysecretvolume</code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: example-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  rules:
+  - host: kube-devnation.info
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: quarkus-demo-deployment
+          servicePort: 8080
+      - path: /v2
+        backend:
+          serviceName: mynode-deployment
+          servicePort: 8000</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>New deployment with the secret volume:</p>
-</div>
-<div id="replace-myboot-secrets" class="listingblock console-input">
+<div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl replace -f apps/kubefiles/myboot-deployment-configuration-secret.yml</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl apply -f apps/kubefiles/demo-ingress-2.yaml</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Exec into the newly created Pod:</p>
+<p>Test it:</p>
 </div>
-<div id="print-secrets-volume-secrets" class="listingblock console-input">
+<div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">PODNAME=$(kubectl get pod -l app=myboot -o name)
-kubectl exec $PODNAME -- cat /mystuff/secretstuff/password</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl kube-devnation.info</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>Results in:</p>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mypassword</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Supersonic Subatomic Java with Quarkus quarkus-demo-deployment-8cf45f5c8-qmzwl:2</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>You could provide the location of <code>/mystuff/mysecretvolume</code> to the pod via an environment variable so the application knows where to go looking.</p>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl kube-devnation.info/v2</code></pre>
 </div>
-<div class="paragraph">
-<p>More information on <a href="https://kubernetes.io/docs/concepts/configuration/secret/">Secrets</a></p>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Node Bonjour on mynode-deployment-77c7bf857d-5nfl4 0</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -454,8 +502,13 @@ kubectl exec $PODNAME -- cat /mystuff/secretstuff/password</code></pre>
 <div class="sectionbody">
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl delete deployment myboot
-kubectl delete service myboot</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl delete deployment mynode-deployment
+kubectl delete service mynode-deployment
+
+kubectl delete deployment quarkus-demo-deployment
+kubectl delete service quarkus-demo-deployment
+
+kubectl delete -f apps/kubefiles/demo-ingress-2.yaml</code></pre>
 </div>
 </div>
 </div>

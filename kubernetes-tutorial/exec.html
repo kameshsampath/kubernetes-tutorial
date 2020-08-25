@@ -61,16 +61,10 @@
     <a class="nav-link" href="installation.html#tutorial-all-local">CLI</a>
   </li>
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="installation.html#env-path">Env and Path</a>
+    <a class="nav-link" href="installation.html#install-minikube">Install Minikube</a>
   </li>
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="installation.html#start-minikube">Start Minikube</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="installation.html#verify-setup">Verify Setup</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="installation.html#openshift">OpenShift</a>
+    <a class="nav-link" href="installation.html#start-kubernetes">Start Kubernetes</a>
   </li>
 </ul>
   </li>
@@ -87,10 +81,10 @@
     <a class="nav-link" href="pod-rs-deployment.html">Pod, ReplicaSet, Deployment</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="logs.html">Logs</a>
+    <a class="nav-link" href="service.html">Service</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="service.html">Service</a>
+    <a class="nav-link" href="logs.html">Logs</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="service-magic.html">Service Magic</a>
@@ -108,16 +102,13 @@
     <a class="nav-link" href="building-images.html">Building Images</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="resources.html">Resources/Limits</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="live-ready.html">Liveness &amp; Readiness</a>
-  </li>
-  <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="exec.html">Exec</a>
+    <a class="nav-link" href="resources.html">Resources and Limits</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="rolling-updates.html">Rolling updates</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="live-ready.html">Liveness, Readiness &amp; Startup</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="configmap.html">ConfigMap</a>
@@ -126,13 +117,37 @@
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">4. Advanced</span>
+    <span class="nav-text">4. Intermediate</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="secrets.html">Secrets</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="crds.html">CRDs</a>
+    <a class="nav-link" href="crds.html">Operators</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="volumes-persistentvolumes.html">Volumes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="taints-affinity.html">Taints &amp; Affinity</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="jobs-cronjobs.html">Jobs &amp; CronJobs</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="daemonset.html">DaemonSet</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="statefulset.html">StatefulSet</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">5. Advanced</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ingress.html">Ingress</a>
   </li>
 </ul>
   </li>
@@ -151,8 +166,7 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">kubernetes-tutorial</a></li>
-    <li>3. Elementary</li>
-    <li><a href="exec.html">Exec</a></li>
+    <li><a href="exec.html">Kubectl exec</a></li>
   </ul>
 </nav>
   <div class="edit-this-page"><a href="https://github.com/kameshsampath/kubernetes-tutorial/edit/master/documentation/modules/ROOT/pages/exec.adoc">Edit this Page</a></div>
